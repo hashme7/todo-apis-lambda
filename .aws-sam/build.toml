@@ -5,8 +5,8 @@ codeuri = "/home/hashim/todo-app/todoapp"
 runtime = "nodejs22.x"
 architecture = "x86_64"
 handler = "src/handlers/get-all-items.getAllItemsHandler"
-manifest_hash = "034dd9d287d8b04d2d2681a98a82af3a"
+manifest_hash = "afb7f498c1d5ee268af041123cf22ef5"
 packagetype = "Zip"
-functions = ["getAllItemsFunction"]
+functions = ["getAllItemsFunction", "putItemFunction"]
 
 [layer_build_definitions]

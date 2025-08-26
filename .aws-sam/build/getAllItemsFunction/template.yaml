@@ -4,6 +4,11 @@ Description: >-
 Transform:
 - AWS::Serverless-2016-10-31
 
+Parameters:
+  MongoConnectionString:
+    Type: String
+    Description: "MongoDB connection string"
+
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 Resources:
@@ -21,13 +26,38 @@ Resources:
       MemorySize: 128
       Timeout: 100
       Description: A simple example includes a HTTP get method to get all items 
-        from a DynamoDB table.
+        from a MongoDB collection.
+      Environment:
+        Variables:
+          MONGO_CONNECTION_STRING: !Ref MongoConnectionString
+          DATABASE_NAME: todoapp
+          COLLECTION_NAME: todos
       Events:
         Api:
           Type: Api
           Properties:
             Path: /
             Method: GET
+  putItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/put-item.putItemHandler
+      Runtime: nodejs22.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Environment:
+        Variables:
+          MONGO_CONNECTION_STRING: !Ref MongoConnectionString
+          DATABASE_NAME: todoapp
+          COLLECTION_NAME: todos
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group

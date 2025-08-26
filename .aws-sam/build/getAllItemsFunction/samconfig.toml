@@ -16,6 +16,10 @@ lint = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
+s3_prefix = "todoapp"
+region = "us-east-1"
+image_repositories = []
+parameter_overrides = "MongoConnectionString=\"mongodb+srv://hashimkakkaden:hashimpasswords123@cluster0.iowxmmd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0\""
 
 [default.package.parameters]
 resolve_s3 = true
@@ -28,3 +32,12 @@ warm_containers = "EAGER"
 
 [default.local_start_lambda.parameters]
 warm_containers = "EAGER"
+
+["mongodb+srv://hashimkakkaden:qeGrJiLMT8ljPx63@cluster0.otdubed.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0".deploy.parameters]
+stack_name = "todoapp"
+resolve_s3 = true
+s3_prefix = "todoapp"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []

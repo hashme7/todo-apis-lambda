@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: todoapp
 Transform:
 - AWS::Serverless-2016-10-31
+Parameters:
+  MongoConnectionString:
+    Type: String
+    Description: MongoDB connection string
 Resources:
   getAllItemsFunction:
     Type: AWS::Serverless::Function
@@ -13,7 +17,13 @@ Resources:
       MemorySize: 128
       Timeout: 100
       Description: A simple example includes a HTTP get method to get all items from
-        a DynamoDB table.
+        a MongoDB collection.
+      Environment:
+        Variables:
+          MONGO_CONNECTION_STRING:
+            Ref: MongoConnectionString
+          DATABASE_NAME: todoapp
+          COLLECTION_NAME: todos
       Events:
         Api:
           Type: Api
@@ -23,6 +33,30 @@ Resources:
       CodeUri: getAllItemsFunction
     Metadata:
       SamResourceId: getAllItemsFunction
+  putItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/put-item.putItemHandler
+      Runtime: nodejs22.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Environment:
+        Variables:
+          MONGO_CONNECTION_STRING:
+            Ref: MongoConnectionString
+          DATABASE_NAME: todoapp
+          COLLECTION_NAME: todos
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+      CodeUri: putItemFunction
+    Metadata:
+      SamResourceId: putItemFunction
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:
