@@ -57,6 +57,54 @@ Resources:
       CodeUri: putItemFunction
     Metadata:
       SamResourceId: putItemFunction
+  AddUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/sign-up.signupFunction
+      Runtime: nodejs22.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Environment:
+        Variables:
+          MONGO_CONNECTION_STRING:
+            Ref: MongoConnectionString
+          DATABASE_NAME: todoapp
+          COLLECTION_NAME: todos
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /signup
+            Method: POST
+      CodeUri: AddUserFunction
+    Metadata:
+      SamResourceId: AddUserFunction
+  confirmSignupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/confirm-signup.confirmSignupFunction
+      Runtime: nodejs22.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Environment:
+        Variables:
+          MONGO_CONNECTION_STRING:
+            Ref: MongoConnectionString
+          DATABASE_NAME: todoapp
+          COLLECTION_NAME: todos
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /signup-confirm
+            Method: POST
+      CodeUri: confirmSignupFunction
+    Metadata:
+      SamResourceId: confirmSignupFunction
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:

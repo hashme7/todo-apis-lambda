@@ -8,7 +8,7 @@ export const putItemHandler = async (event, context) => {
     console.info('received:', event);
     console.log('context', context)
 
-    const collection = await getCollection();
+    const collection = await getCollection('todos');
     let item;
     try {
         item = JSON.parse(event.body);

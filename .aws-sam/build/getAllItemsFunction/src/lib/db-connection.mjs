@@ -38,5 +38,5 @@ export async function connectToDatabase() {
 
 export async function getCollection(collectionName) {
     const { db } = await connectToDatabase();
-    return db.collection(collectionName || process.env.COLLECTION_NAME || 'todos');
+    return db.collection(collectionName || process.env.COLLECTION_NAME );
 }
