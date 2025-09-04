@@ -1,7 +1,7 @@
-import { getCollection } from "../lib/db-connection.mjs";
-import { addUser } from "../api/cognito.mjs";
+const { getCollection } = require("../lib/db-connection.js");
+const { addUser } = require("../api/cognito.js");
 
-export const signupFunction = async (event) => {
+const signupFunction = async (event) => {
     if (event.httpMethod !== "POST") {
         throw new Error("this endpoint only accepts POST method")
     }
@@ -23,16 +23,18 @@ export const signupFunction = async (event) => {
             })
         }
     }
+    
     const user = {
         ...body,
         createdAt: new Date(),
-        isVerified:false,
+        isVerified: false,
     }
+    
     let insertedUser
     try {
         const result = await collection.insertOne(user);
-        await addUser({ username: body.username, email: body.email, password: body.password ,name:body.username})
-        insertedUser = await collection.findOne({ _id: result.insertedId  })
+        await addUser({ username: body.username, email: body.email, password: body.password, name: body.username})
+        insertedUser = await collection.findOne({ _id: result.insertedId })
     } catch (error) {
         console.log(error)
         return {
@@ -47,6 +49,7 @@ export const signupFunction = async (event) => {
             })
         }
     }
+    
     const response = {
         statusCode: 201,
         headers: {
@@ -58,4 +61,8 @@ export const signupFunction = async (event) => {
         body: JSON.stringify(insertedUser)
     };
     return response;
-}
+};
+
+module.exports = {
+    signupFunction
+};

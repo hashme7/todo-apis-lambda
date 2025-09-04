@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
-export const authenticate = (token)=>{
+const authenticate = (token) => {
     if(token){
         jwt.verify(token,"scrt",(err,user)=>{
             if(err){
@@ -12,3 +12,7 @@ export const authenticate = (token)=>{
         return
     }
 }
+
+module.exports = {
+    authenticate
+};

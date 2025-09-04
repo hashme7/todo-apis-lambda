@@ -1,12 +1,12 @@
 module.exports = {
-  testEnvironment: "node", // only keep .mjs
-  testMatch: ["**/tests/**/*.test.js", "**/tests/**/*.test.mjs"],
+  testEnvironment: "node",
+  testMatch: ["**/tests/**/*.test.js"],
   collectCoverageFrom: ["**/src/**/*.js"],
   coverageDirectory: "./coverage",
   coverageProvider: "v8",
-  transform: {}, // disable Babel/esbuild\
+  transform: {},
   modulePathIgnorePatterns: [
-      "<rootDir>/.aws-sam/", 
+    "<rootDir>/.aws-sam/", 
     "<rootDir>/node_modules/"
   ],
 };

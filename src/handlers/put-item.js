@@ -1,6 +1,6 @@
-import { getCollection } from "../lib/db-connection.mjs";
+const { getCollection ,connectToDatabase} = require("../lib/db-connection.js");
 
-export const putItemHandler = async (event, context) => {
+const putItemHandler = async (event, context) => {
     if (event.httpMethod !== "POST") {
         throw new Error(`putItem only accepts POST method, you tried: ${event.httpMethod}`)
     }
@@ -8,7 +8,7 @@ export const putItemHandler = async (event, context) => {
     console.info('received:', event);
     console.log('context', context)
 
-    const collection = await getCollection('todos');
+    const collection = await getCollection('todos',connectToDatabase);
     let item;
     try {
         item = JSON.parse(event.body);
@@ -18,20 +18,21 @@ export const putItemHandler = async (event, context) => {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': "*",
-
             },
-            body: JSON.parse({
+            body: JSON.stringify({
                 error: "Invalid JSON Request",
                 message: error.message
             })
         }
     }
+    
     const todoItem = {
         ...item,
         createdAt: new Date(),
         updatedAt: new Date(),
         completed: item.completed || false
     }
+    
     let result;
     let insertedItem;
     try {
@@ -57,4 +58,8 @@ export const putItemHandler = async (event, context) => {
         body: JSON.stringify(formattedItem)
     };
     return response;
-}
+};
+
+module.exports = {
+    putItemHandler
+};

@@ -1,22 +1,20 @@
-import { getCollection } from '../lib/db-connection.mjs';
+const { getCollection } = require('../lib/db-connection.js');
 
 /**
  * A simple example includes a HTTP get method to get all items from a MongoDB collection.
  */
-export const getAllItemsHandler = async (event) => {
+const getAllItemsHandler = async (event) => {
     if (event.httpMethod !== 'GET') {
         throw new Error(`getAllItems only accept GET method, you tried: ${event.httpMethod}`);
     }
-    // All log statements are written to CloudWatch
+    
     console.info('received:', event);
 
     try {
         const collection = await getCollection();
         
-        // Get all items from the collection
         const items = await collection.find({}).toArray();
         
-        // Convert MongoDB _id to string for JSON serialization
         const formattedItems = items.map(item => ({
             ...item,
             _id: item._id.toString()
@@ -33,7 +31,6 @@ export const getAllItemsHandler = async (event) => {
             body: JSON.stringify(formattedItems)
         };
 
-        // All log statements are written to CloudWatch
         console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
         return response;
     } catch (err) {
@@ -51,4 +48,8 @@ export const getAllItemsHandler = async (event) => {
             })
         };
     }
+};
+
+module.exports = {
+    getAllItemsHandler
 };

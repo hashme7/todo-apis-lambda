@@ -1,6 +1,5 @@
-import AWS from "aws-sdk"; // still works, aws-sdk v2 is CJS-compatible
-import { v4 as uuidv4 } from 'uuid';
-
+const AWS = require("aws-sdk");
+const { v4: uuidv4 } = require('uuid');
 
 const sqs = new AWS.SQS({ region: "us-east-1" });
 const SQS_QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/643546864364/todoapp-todos";
@@ -12,7 +11,7 @@ const corsHeaders = {
     'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
 };
 
-export const todoApiHandler = async(event) => {
+const todoApiHandler = async(event) => {
     console.info('Todo API Request:', JSON.stringify(event, null, 2));
     if (event.httpMethod === 'OPTIONS') {
         return {
@@ -22,8 +21,8 @@ export const todoApiHandler = async(event) => {
         };
     }
     try {
-        const {httpMethod,pathParameters,body:requestBody} = event;
-        let operation,payload;
+        const {httpMethod, pathParameters, body: requestBody} = event;
+        let operation, payload;
         let parsedBody = {};
         if (requestBody) {
             try {
@@ -82,7 +81,7 @@ export const todoApiHandler = async(event) => {
             payload,
             requestId: event.requestContext.requestId,
             timestamp: new Date().toISOString(),
-            source:"api"
+            source: "api"
         }
         const sqsParams = {
             QueueUrl: SQS_QUEUE_URL,
@@ -125,4 +124,8 @@ export const todoApiHandler = async(event) => {
             })
         };
     }
-}
+};
+
+module.exports = {
+    todoApiHandler
+};

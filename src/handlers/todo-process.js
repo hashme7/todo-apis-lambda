@@ -1,4 +1,5 @@
-import { getCollection } from "../lib/db-connection.mjs";
+const { getCollection } = require("../lib/db-connection.js");
+const { ObjectId } = require('mongodb');
 
 const processTodo = async (operation, payload) => {
     const collection = await getCollection('todos');
@@ -17,8 +18,9 @@ const processTodo = async (operation, payload) => {
             throw new Error(`Unknown operation: ${operation}`);
     }
 }
-export const todoProcessHandler = async(event) => {
-     console.info('Processing SQS messages:', JSON.stringify(event, null, 2));
+
+const todoProcessHandler = async(event) => {
+    console.info('Processing SQS messages:', JSON.stringify(event, null, 2));
 
     const results = [];
     
@@ -57,7 +59,6 @@ export const todoProcessHandler = async(event) => {
 }
 
 async function createTodo(collection, payload) {
-    
     const todo = {
         ...payload,
         createdAt: new Date(payload.createdAt),
@@ -65,7 +66,6 @@ async function createTodo(collection, payload) {
     };
 
     const result = await collection.insertOne(todo);
-    
 
     return {
         _id: result.insertedId.toString(),
@@ -95,7 +95,6 @@ async function updateTodo(collection, payload) {
     }
 
     const updatedTodo = await collection.findOne({ _id: new ObjectId(id) });
-    
 
     return {
         ...updatedTodo,
@@ -126,3 +125,7 @@ async function deleteTodo(collection, payload) {
 
     return { id, deleted: true };
 }
+
+module.exports = {
+    todoProcessHandler
+};

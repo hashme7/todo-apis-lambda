@@ -1,9 +1,9 @@
-import { MongoClient } from 'mongodb';
+const { MongoClient } = require('mongodb');
 
 let cachedClient = null;
 let cachedDb = null;
 
-export async function connectToDatabase() {
+async function connectToDatabase() {
     if (cachedClient && cachedDb) {
         return { client: cachedClient, db: cachedDb };
     }
@@ -36,7 +36,12 @@ export async function connectToDatabase() {
     }
 }
 
-export async function getCollection(collectionName) {
+async function getCollection(collectionName,connectToDatabase) {
     const { db } = await connectToDatabase();
-    return db.collection(collectionName || process.env.COLLECTION_NAME );
+    return db.collection(collectionName || process.env.COLLECTION_NAME);
 }
+
+module.exports = {
+    connectToDatabase,
+    getCollection
+};
