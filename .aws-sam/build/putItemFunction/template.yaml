@@ -16,6 +16,15 @@ Resources:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
   # This is a Lambda function config associated with the source code: get-all-items.js
+  TodoProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${AWS::StackName}-todos"
+      VisibilityTimeout: 300
+      MessageRetentionPeriod: 1209600
+      Tags:
+        - Key: "Environment" 
+          Value: "Production"
   getAllItemsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -98,6 +107,66 @@ Resources:
           Properties:
             Path: /signup-confirm
             Method: POST
+  todoApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/todo-api.todoApiHandler
+      Runtime: nodejs22.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Policies:
+        - SQSSendMessagePolicy:              
+            QueueName: !GetAtt TodoProcessingQueue.QueueName
+        - AWSLambdaBasicExecutionRole
+      Environment:
+        Variables:
+          MONGO_CONNECTION_STRING: !Ref MongoConnectionString
+          DATABASE_NAME: todoapp
+          COLLECTION_NAME: todos
+      Events:
+        CreateTodo:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: POST
+        UpdateTodo:
+          Type: Api
+          Properties:
+            Path: /todos/{id}
+            Method: PUT
+        DeleteTodo:
+          Type: Api
+          Properties:
+            Path: /todos/{id}
+            Method: DELETE
+  todoProcessFunction:
+    Type: AWS::Serverless::Function
+    DependsOn: TodoProcessingQueue
+    Properties:
+      Handler: src/handlers/todo-process.todoProcessHandler
+      Runtime: nodejs22.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - SQSPollerPolicy:
+          QueueName: !GetAtt TodoProcessingQueue.QueueName
+      Environment:
+        Variables:
+          MONGO_CONNECTION_STRING: !Ref MongoConnectionString
+          DATABASE_NAME: todoapp
+          COLLECTION_NAME: todos
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt TodoProcessingQueue.Arn
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 5 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:
