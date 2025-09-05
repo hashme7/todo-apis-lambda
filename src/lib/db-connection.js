@@ -36,7 +36,7 @@ async function connectToDatabase() {
     }
 }
 
-async function getCollection(collectionName,connectToDatabase) {
+async function getCollection(collectionName) {
     const { db } = await connectToDatabase();
     return db.collection(collectionName || process.env.COLLECTION_NAME);
 }

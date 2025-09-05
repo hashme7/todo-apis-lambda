@@ -98,18 +98,21 @@ const todoApiHandler = async(event) => {
             }
         };
         await sqs.sendMessage(sqsParams).promise();
+
+        console.log("operation", operation=== 'CREATE_TODO' ? 'Create Todo' : operation);
         const response = {
             statusCode: operation === 'CREATE_TODO' ? 201 : 200,
             headers: corsHeaders,
             body: JSON.stringify({
                 success: true,
+
                 message: `Todo operation ${operation.toLowerCase()} queued successfully`,
                 requestId: message.requestId,
                 ...(operation === 'CREATE_TODO' && { todo: payload })
             })
         };
 
-        console.log('Response:', JSON.stringify(response, null, 2));
+        console.log('Response:', JSON.stringify(response));
         return response;
     } catch (error) {
         console.error('Error in todoApiHandler:', error);
